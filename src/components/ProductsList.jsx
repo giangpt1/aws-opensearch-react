@@ -8,12 +8,18 @@ const ProductsList = ({ results, keyword }) => {
     }, {});
   };
 
+  const allSubstring = keyword.trim().split(" ");
+
   const filteredData = [];
 
   results.forEach(item => {
     const productsTmp = item._source.products;
     for (const prod of productsTmp) {
-      if (prod.product_name.toLowerCase().includes(keyword)) {
+      if (
+        allSubstring.every(word =>
+          prod.product_name.toLowerCase().includes(word)
+        )
+      ) {
         filteredData.push(prod);
       }
     }
@@ -29,13 +35,27 @@ const ProductsList = ({ results, keyword }) => {
             <section className="product__info">
               <div className="product__title">{key}</div>
 
+              {/* <table> */}
               {values.map(prod => {
                 return (
-                  <div className="product__desc">
-                    Product Name: {prod.product_name} ---*--- ID: {prod._id}
+                  // <tr key={prod._id}>
+                  //   <td>Product Name: {prod.product_name}</td>
+                  //   <td>ID: {prod._id}</td>
+                  <div className="product__desc" key={prod._id}>
+                    <div style={{ textAlign: "left" }}>
+                      <strong>Product Name: </strong>
+                      {prod.product_name}
+                    </div>
+                    <div style={{ textAlign: "left" }}>
+                      <strong>ID: </strong>
+                      {prod._id}
+                    </div>
+                    <hr />
                   </div>
+                  // </tr>
                 );
               })}
+              {/* </table> */}
             </section>
           </div>
         );
