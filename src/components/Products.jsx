@@ -39,7 +39,7 @@ export const Products = () => {
   };
 
   return (
-    <div className="products">
+    <div className="products" style={{ width: "100%" }}>
       <h1>Products</h1>
       <SearchProducts handleOnChange={handleOnChange} />
       <ProductsList results={productsData} keyword={searchTerm} />
