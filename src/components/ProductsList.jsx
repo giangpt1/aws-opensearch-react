@@ -27,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
   width: "250px",
 }));
 
-const priceRange = [10, 20, 30, 40, 50];
+const priceRange = ["10", "20", "30", "40", "50"];
 
 const ResultsFound = ({ count, keyword }) => {
   return (
@@ -85,9 +85,11 @@ const FilterSection = ({ handleOnChangePrice, priceRangeData, price }) => {
             id="filter-price-select"
             onChange={handleOnChangePrice}
             style={{ width: "100%" }}>
-            {priceRangeData.map(item => (
+            {priceRangeData.map((item, index) => (
               <MenuItem value={item} key={item}>
-                {item}
+                {index === priceRangeData.length - 1
+                  ? `${item - 10} ~ `
+                  : `${item - 10} ~ ${item}`}
               </MenuItem>
             ))}
           </Select>
@@ -135,12 +137,23 @@ const ProductsList = ({ results, keyword }) => {
   }, [results]);
 
   const handleOnChangePrice = event => {
+    const currentPriceRange = parseInt(event.target.value);
+    let lowerBoundPrice = parseInt(event.target.value) - 10;
+    let upperBoundPrice = 0;
+
+    if (currentPriceRange < 50) {
+      upperBoundPrice = currentPriceRange;
+    }
     let productsFilterByPrice = _.cloneDeep(filteringData(results));
-    productsFilterByPrice = productsFilterByPrice.filter(
-      item =>
-        item.price <= parseFloat(event.target.value) &&
-        item.price >= parseFloat(event.target.value) - 10
-    );
+    productsFilterByPrice = productsFilterByPrice.filter(item => {
+      if (!upperBoundPrice) {
+        return item.price >= parseFloat(lowerBoundPrice);
+      }
+      return (
+        item.price <= parseFloat(upperBoundPrice) &&
+        item.price >= parseFloat(lowerBoundPrice)
+      );
+    });
     setProducts(productsFilterByPrice);
     setPrice(event.target.value);
   };
